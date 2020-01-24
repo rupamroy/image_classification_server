@@ -1,4 +1,7 @@
 
+### To run 
+python app.py
+
 There is also another way. You can directly use the python executable from environment in ExecStart like this:
 
 ExecStart=/path/to/conda/envs/my_env_name/bin/python /path/to/executable

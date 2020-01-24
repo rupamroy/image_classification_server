@@ -37,7 +37,7 @@ def post_file(filename):
         fp.write(request.data)
 
     try:
-        return "",classify.predict(fullFileName)
+        return "Success",classify.predict(fullFileName)
     except ValueError as e:
         print("Value error \n {0}".format(e))
     except AttributeError as a:
