@@ -1,11 +1,4 @@
-import csv
-import json
+from datetime import datetime, timedelta
 
-classList = [None] * 10
-
-classList[0]=1
-classList[2]=0
- 
-with open('log.csv', mode='a') as log_file:
-    log_writer = csv.writer(log_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    log_writer.writerow(classList)
+print(datetime.today().date())
+print((datetime.today() - timedelta(1)).date())

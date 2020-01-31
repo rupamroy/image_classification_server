@@ -1,7 +1,8 @@
 import tensorflow as tf
 import numpy as np
 import threading
-from datetime import datetime
+from datetime import datetime, timedelta
+import time
 import csv
 import os
 import subprocess
@@ -14,7 +15,7 @@ model = tf.keras.models.load_model('eatingWithoutTFHubModel.h5')
 model.compile(optimizer='adam', loss='binary_crossentropy',
               metrics=['accuracy'])
 
-alarmRangDate = datetime.today().date()
+alarmRangDate = (datetime.today() - timedelta(1)).date()
 
 eatingCounter = 0
 classList = [None] * 10
@@ -33,48 +34,50 @@ def predict(filename):
 
     prediction = model.predict(img_tensor)
 
-    with lock:
-        with open('log_file.csv', mode='a') as log_file:
-            log_writer = csv.writer(log_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            now = datetime.now()
+    now = datetime.now()
 
-            toPrintDate = now.strftime("%Y-%m-%d")
-            toPrintTime = now.strftime("%H:%M:%S")
+    toPrintDate = now.strftime("%Y-%m-%d")
+    toPrintTime = now.strftime("%H:%M:%S")
 
-            if(prediction.item() < 0.5):
-                log_writer.writerow([toPrintDate, toPrintTime, 'Eating',classList])
-                shutil.move(filename, '/home/rupam/dev/eating-classification/classes/stg_eating/{}'.format(justFileName))
-                classList[eatingCounter]=1
-            else:
-                log_writer.writerow([toPrintDate, toPrintTime, 'Not Eating', classList])
-                shutil.move(filename, '/home/rupam/dev/eating-classification/classes/stg_other/{}'.format(justFileName))
-                classList[eatingCounter] = 0
+    if(prediction.item() < 0.5):
+        print([toPrintDate, toPrintTime, 'Eating', classList])
+        start_time = time.time()
+        shutil.move(filename, '/home/rupam/dev/eating_verification/classes/stg_eating/{}'.format(justFileName))
+        print('To move to eating: {}'.format(time.time() - start_time))
+        classList[eatingCounter] = 1
+    else:
+        print([toPrintDate, toPrintTime, 'Not Eating', classList])
+        start_time = time.time()
+        shutil.move(filename, '/home/rupam/dev/eating_verification/classes/stg_other/{}'.format(justFileName))
+        print('To move to not eating: {}'.format(time.time() - start_time))
+        classList[eatingCounter] = 0
 
-            alert(classList)
+    alert(classList)
 
-            eatingCounter = eatingCounter + 1
-            print('counter: {}'.format(eatingCounter))
-            if(eatingCounter == 10):
-                eatingCounter = 0
-            return 200
+    eatingCounter = eatingCounter + 1
+    if(eatingCounter == 10):
+        eatingCounter = 0
+    return 200
 
 
 def alert(classList):
     global alarmRangDate
-    isTrueEating =  list(filter(lambda x: x == 1, classList))
-    hasAlreadyRangForToday = True if (alarmRangDate != datetime.today().date()) else False
-    if(hasAlreadyRangForToday and (len(isTrueEating) > 6)):
+    isTrueEating = list(filter(lambda x: x == 1, classList))
+    hasAlreadyRangForToday = True if (
+        alarmRangDate != datetime.today().date()) else False
+    if(hasAlreadyRangForToday and (len(isTrueEating) > 4)):
         alarmRangDate = datetime.today().date()
-        log('Alert sound............')
-        log('classList={}'.format(classList))
-        log('isTrueEating={}'.format(isTrueEating))
+        log(['Alert sound............', 'classList=', classList,'isTrueEating=', isTrueEating])
         play_mp3()
+
 
 def play_mp3():
     path = '/home/rupam/Music/medicineAlert.mp3'
     subprocess.Popen(['mpg123', '-q', path]).wait()
 
+
 def log(log):
-     with open('log.csv', mode='a') as log_file:
-            log_writer = csv.writer(log_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            log_writer.writerow(log)
+    with open('log.csv', mode='a') as log_file:
+        log_writer = csv.writer(log_file, delimiter=',',
+                                quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        log_writer.writerow(log)
