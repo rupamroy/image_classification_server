@@ -9,6 +9,7 @@ import subprocess
 import shutil
 from tensorflow import keras
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
+import weather
 
 model = tf.keras.models.load_model('eatingWithoutTFHubModel.h5')
 
@@ -69,6 +70,7 @@ def alert(classList):
         alarmRangDate = datetime.today().date()
         log(['Alert sound............', 'classList=', classList,'isTrueEating=', isTrueEating])
         play_mp3()
+        weather.getWeather()
 
 
 def play_mp3():
