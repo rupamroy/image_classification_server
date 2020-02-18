@@ -22,8 +22,8 @@ def getWeather():
 
     maxtemp = today['DailyForecasts'][0]['Temperature']['Maximum']['Value']
     mintemp = today['DailyForecasts'][0]['Temperature']['Minimum']['Value']
-    announcement.append('Weather Headlines for this week {}'.format(today['Headline']['Text']))
-    announcement.append('Todays max Temperature would be {} degree and min temperature {} degree'.format(
+    announcement.append('Weather Headlines for this week\n {}\n'.format(today['Headline']['Text']))
+    announcement.append('Todays max Temperature would be:{} and min would be {}\n'.format(
         maxtemp, mintemp))
     dayTimePhrase = today['DailyForecasts'][0]['Day']['IconPhrase']
     dayTimePrecipitation = 'precipitaion' if today['DailyForecasts'][
@@ -31,7 +31,7 @@ def getWeather():
     nightTimePhrase = today['DailyForecasts'][0]['Night']['IconPhrase']
     nightTimePrecipitation = 'precipitation' if today['DailyForecasts'][
         0]['Night']['HasPrecipitation'] else 'no precipitation'
-    announcement.append('Day time {} with {} and night time {} with {}'.format(
+    announcement.append('Day time {} with {} and night time {} with {}\n'.format(
         dayTimePhrase, dayTimePrecipitation, nightTimePhrase, nightTimePrecipitation))
 
     URL = "http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/11418_PC?apikey=aYzKuGPLTjMAdHEYaRUStA8Yra7HcGWq"
@@ -50,10 +50,10 @@ def getWeather():
     rainChart = list(filter(getRain, forecastMapped))
 
     if(len(rainChart) > 0):
-        announcement.append('Rain starts at {}'.format(rainChart[0]['time']))
+        announcement.append('Rain starts at {}\n'.format(rainChart[0]['time']))
         rainHours.getRainHours(forecastMapped, announcement)
     else:
-        announcement.append('Rain is not expected in the next 12 hours')
+        announcement.append('Rain is not expected in the next 12 hours\n')
 
     sayIt.say(' '.join(announcement))
 
