@@ -22,7 +22,7 @@ def getWeather():
 
     maxtemp = today['DailyForecasts'][0]['Temperature']['Maximum']['Value']
     mintemp = today['DailyForecasts'][0]['Temperature']['Minimum']['Value']
-    announcement.append('Headline for this week {}'.format(today['Headline']['Text']))
+    announcement.append('Weather Headlines for this week {}'.format(today['Headline']['Text']))
     announcement.append('Todays max Temperature would be {} degree and min temperature {} degree'.format(
         maxtemp, mintemp))
     dayTimePhrase = today['DailyForecasts'][0]['Day']['IconPhrase']
@@ -53,7 +53,7 @@ def getWeather():
         announcement.append('Rain starts at {}'.format(rainChart[0]['time']))
         rainHours.getRainHours(forecastMapped, announcement)
     else:
-        announcement.append('No rain is expected in the next 12 hours')
+        announcement.append('Rain is not expected in the next 12 hours')
 
     sayIt.say(' '.join(announcement))
 

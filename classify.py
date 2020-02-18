@@ -41,16 +41,18 @@ def predict(filename):
     toPrintTime = now.strftime("%H:%M:%S")
 
     if(prediction.item() < 0.5):
-        print([toPrintDate, toPrintTime, 'Eating', classList])
+        # print([toPrintDate, toPrintTime, 'Eating', classList])
         start_time = time.time()
-        shutil.move(filename, '/home/rupam/dev/eating_verification/classes/stg_eating/{}'.format(justFileName))
-        print('To move to eating: {}'.format(time.time() - start_time))
+        shutil.move(
+            filename, '/home/rupam/dev/eating_verification/classes/stg_eating/{}'.format(justFileName))
+        print('Move to eating: {}'.format(time.time() - start_time))
         classList[eatingCounter] = 1
     else:
         print([toPrintDate, toPrintTime, 'Not Eating', classList])
         start_time = time.time()
-        shutil.move(filename, '/home/rupam/dev/eating_verification/classes/stg_other/{}'.format(justFileName))
-        print('To move to not eating: {}'.format(time.time() - start_time))
+        shutil.move(
+            filename, '/home/rupam/dev/eating_verification/classes/stg_other/{}'.format(justFileName))
+        # print('To move to not eating: {}'.format(time.time() - start_time))
         classList[eatingCounter] = 0
 
     alert(classList)
@@ -64,11 +66,12 @@ def predict(filename):
 def alert(classList):
     global alarmRangDate
     isTrueEating = list(filter(lambda x: x == 1, classList))
-    hasAlreadyRangForToday = True if (
+    alarmDidNotRingToday = True if (
         alarmRangDate != datetime.today().date()) else False
-    if(hasAlreadyRangForToday and (len(isTrueEating) > 4)):
+    if(alarmDidNotRingToday and (len(isTrueEating) > 4)):
         alarmRangDate = datetime.today().date()
-        log(['Alert sound............', 'classList=', classList,'isTrueEating=', isTrueEating])
+        log(['Alert sound............', 'classList=',
+             classList, 'isTrueEating=', isTrueEating])
         play_mp3()
         weather.getWeather()
 
@@ -83,3 +86,12 @@ def log(log):
         log_writer = csv.writer(log_file, delimiter=',',
                                 quotechar='"', quoting=csv.QUOTE_MINIMAL)
         log_writer.writerow(log)
+
+def weekendSpecial():
+    weekday = datetime.now().weekday()
+    # if sunday or saturday
+    weekdayExcuse = True if ( weekday == 5 or weekday == 6) else False
+    hour = datetime.now().hour
+    hoursOnWeekday = True if (hour >= 7 and hour < 16) else False
+    return (weekdayExcuse and hoursOnWeekday)
+    
