@@ -11,7 +11,7 @@ from tensorflow import keras
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import weather
 
-model = tf.keras.models.load_model('eatingWithoutTFHubModel.h5')
+model = tf.keras.models.load_model('eatingWithoutTFHubModel_3.h5')
 
 model.compile(optimizer='adam', loss='binary_crossentropy',
               metrics=['accuracy'])
@@ -41,18 +41,18 @@ def predict(filename):
     toPrintTime = now.strftime("%H:%M:%S")
 
     if(prediction.item() < 0.5):
-        # print([toPrintDate, toPrintTime, 'Eating', classList])
         start_time = time.time()
         shutil.move(
             filename, '/home/rupam/dev/eating_verification/classes/stg_eating/{}'.format(justFileName))
         print('Move to eating: {}'.format(time.time() - start_time))
         classList[eatingCounter] = 1
+        print([toPrintDate, toPrintTime, 'Eating', classList])
     else:
         print([toPrintDate, toPrintTime, 'Not Eating', classList])
         start_time = time.time()
         shutil.move(
             filename, '/home/rupam/dev/eating_verification/classes/stg_other/{}'.format(justFileName))
-        # print('To move to not eating: {}'.format(time.time() - start_time))
+        print('To move to not eating: {}'.format(time.time() - start_time))
         classList[eatingCounter] = 0
 
     alert(classList)
