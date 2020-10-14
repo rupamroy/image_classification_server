@@ -3,10 +3,12 @@ import sys
 import json
 import classify
 import tensorflow as tf
-from flask import Flask, request, abort, jsonify, send_from_directory
+from flask import Flask, request, abort, jsonify, send_from_directory, Response
 
 
 UPLOAD_DIRECTORY = "/tmp/image_classification_files"
+
+IMAGE_DIRECTORY = "/home/rupam/dev/image_classification_server/images"
 
 if not os.path.exists(UPLOAD_DIRECTORY):
     os.makedirs(UPLOAD_DIRECTORY)
@@ -17,6 +19,24 @@ api = Flask(__name__)
 @api.route("/healthcheck", methods=["GET"])
 def healthcheck():
     return jsonify({"status": "healthy"}), 200
+
+@api.route("/capture/<prediction>/<filename>", methods=["POST"])
+def capture_file(filename, prediction):
+    if "/" in filename:
+        # Return 400 BAD REQUEST
+        abort(400, "no subdirectories directories allowed")
+    print('File:', filename, ' prediction:', prediction)
+    if prediction == 'eating':
+        fullFileName = os.path.join('/home/rupam/dev/eating_verification/classes/stg_eating/', filename)
+    elif prediction == 'other':
+        fullFileName = os.path.join('/home/rupam/dev/eating_verification/classes/stg_other/', filename)
+    else:
+        fullFileName = os.path.join('/home/rupam/dev/eating_verification/classes/stg_eating_doubtful/', filename)
+        
+    with open(fullFileName, "wb") as fp:
+        fp.write(request.data)
+    return Response(status=200)
+
 
 
 @api.route("/predict/<filename>", methods=["POST"])

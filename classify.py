@@ -11,17 +11,17 @@ from tensorflow import keras
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import weather
 
-model = tf.keras.models.load_model('eatingWithoutTFHubModel_3.h5')
+# model = tf.keras.models.load_model('eatingWithoutTFHubModel_3.h5')
 
-model.compile(optimizer='adam', loss='binary_crossentropy',
-              metrics=['accuracy'])
+# model.compile(optimizer='adam', loss='binary_crossentropy',
+#               metrics=['accuracy'])
 
-alarmRangDate = (datetime.today() - timedelta(1)).date()
+# alarmRangDate = (datetime.today() - timedelta(1)).date()
 
-eatingCounter = 0
-classList = [None] * 10
+# eatingCounter = 0
+# classList = [None] * 10
 
-lock = threading.Lock()
+# lock = threading.Lock()
 
 
 def predict(filename):
